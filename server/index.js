@@ -8,6 +8,8 @@ import bodyParser from 'body-parser';
 import cors from 'cors'
 import dotenv from 'dotenv'
 import multer from 'multer';
+import { register } from './controllers/auth';
+import { authRouter } from './routes/auth';
 
 
 /* let's do the configuration here*/
@@ -38,6 +40,12 @@ const storage = multer.diskStorage({
 
 const upload = multer({storage});
 
+
+/* let's do the authorization logic here */
+app.use("/auth/register", upload.single("picture"), register)
+
+/* now let's create a router for all our routes */
+app.use("/auth", authRouter)
 
 /* MONGOOSE setup */
 
