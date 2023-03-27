@@ -14,6 +14,10 @@ import userRouter from './routes/user.js';
 import postRouter from './routes/post.js';
 import { verifyToken } from './middleware/auth.js';
 import {createPost} from './controllers/post.js'
+import User from './models/User.js';
+import Post from './models/Post.js';
+
+import { users, posts } from './data/index.js';
 
 /* let's do the configuration here*/
 const filename = fileURLToPath(import.meta.url) 
@@ -24,7 +28,7 @@ const app = express()
 app.use(express.json())
 app.use(helmet())
 app.use(helmet.crossOriginResourcePolicy({policy: "cross-origin"}));
-app.use(morgan)
+app.use(morgan('combined'))
 app.use(bodyParser.json({limit: "30mb", extended: true}))
 app.use(bodyParser.urlencoded({limit:"30mb", extended: true}))
 app.use(cors())
@@ -52,7 +56,8 @@ app.post("/post", upload.single("picture", verifyToken, createPost))
 app.use("/post", postRouter)
 app.use("/auth", authRouter)
 app.use("/user", userRouter)
- 
+
+
 /* MONGOOSE setup */
 const PORT = process.env.PORT || 6001;
 mongoose.connect(process.env.MONGO_URL, {
@@ -60,4 +65,6 @@ mongoose.connect(process.env.MONGO_URL, {
     useUnifiedTopology: true
 }).then(() =>{
     app.listen(PORT, ()=> console.log(`servor running at ${PORT}`))
+    // User.insertMany(users);
+    // Post.insertMany(posts);
 }).catch((error) => console.log(`${error} did not connect`))

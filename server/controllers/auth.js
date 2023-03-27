@@ -48,6 +48,7 @@ export const login = async (req, res) =>{
     try {
         
         // get the email and the password
+        console.log(req.body);
         const {email, password}  = req.body;
     
         const user = await User.findOne({email});
@@ -67,10 +68,6 @@ export const login = async (req, res) =>{
         res.status(200).json({token, user});
 
     } catch (error) {
-        
+        res.status(409).json({message: error.message})
     }
-
-
-
-
 }
