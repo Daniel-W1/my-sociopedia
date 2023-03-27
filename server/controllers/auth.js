@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import {User} from '../models/User.js'
+import  User  from '../models/User.js';
 
 /* has to be async because we are calling the mongodb, which takes time and which is asyncronous func */
 export const register = async (req, res) =>{
@@ -62,6 +62,9 @@ export const login = async (req, res) =>{
         }
     
         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET);
+        delete user.password; // this will prevent the password from being sent back to the front end
+
+        res.status(200).json({token, user});
 
     } catch (error) {
         

@@ -8,9 +8,12 @@ import bodyParser from 'body-parser';
 import cors from 'cors'
 import dotenv from 'dotenv'
 import multer from 'multer';
-import { register } from './controllers/auth';
-import { authRouter } from './routes/auth';
-
+import { register } from './controllers/auth.js';
+import authRouter from './routes/auth.js';
+import userRouter from './routes/user.js';
+import postRouter from './routes/post.js';
+import { verifyToken } from './middleware/auth.js';
+import {createPost} from './controllers/post.js'
 
 /* let's do the configuration here*/
 const filename = fileURLToPath(import.meta.url) 
@@ -42,13 +45,15 @@ const upload = multer({storage});
 
 
 /* let's do the authorization logic here */
-app.use("/auth/register", upload.single("picture"), register)
+app.post("/auth/register", upload.single("picture"), register)
+app.post("/post", upload.single("picture", verifyToken, createPost))
 
 /* now let's create a router for all our routes */
+app.use("/post", postRouter)
 app.use("/auth", authRouter)
-
+app.use("/user", userRouter)
+ 
 /* MONGOOSE setup */
-
 const PORT = process.env.PORT || 6001;
 mongoose.connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
